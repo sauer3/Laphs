@@ -112,4 +112,24 @@ suppressWarnings(
            driver="ESRI Shapefile", 
            overwrite_layer = TRUE))
 
-# filter the trees to keep only the ones in the current CHM tile 
+# filter the trees to keep only the ones within in the current CHM tile extent
+stem_locations_in <- raster::crop(stem_locations,
+                                  chm_extent)
+
+# count how many trees are left
+print(paste0(as.character(nrow(stem_locations_in)), 
+             " trees are within the current CHM extent"))
+
+# crop the CHM to the area containing stems.
+# add a 5m buffer to the edges. 
+chm_cropped <- raster::crop(chm_raster,
+                            extent(stem_locations_in) + 5)
+
+# plot the CHM and add the tree locations as points 
+plot(chm_cropped, legend=TRUE,
+     xlab = 'Easting (m)', ylab = 'Northing (m)',
+     legend.args=list(text='Height (m)', cex=0.75))
+points(stem_locations_in, pch = 20, cex = 0.25)
+
+# Extract height values from the CHM 
+
