@@ -29,17 +29,18 @@ library(rgdal)
 
 
 # set working directory to use relative paths 
-setwd("/Users/victoriascholl/Documents/RSDI-2018/laphs/")
+setwd("~/github/Laphs/")
 
 # define the path to the CHM to get the geographic extent and CRS 
-chm_filename = './data/NEON_D01_HARV_DP3_732000_4703000_CHM.tif'
+chm_filename = './data/NEON_D01_HARV_DP3_732000_4713000_CHM.tif'
 
 # define the path to the zipped woody veg data
 woody_veg_filename = './data/NEON_struct-woody-plant.zip'
 
-stackByTable(dpID = 'DP1.10098.001',
+neonDataStackR::stackByTable(dpID = 'DP1.10098.001',
              filepath = woody_veg_filename,
-             savepath = './data')
+             savepath = './data/stackedFiles/')
+
 
 # calculate absolute locations of individual stems
 
@@ -47,11 +48,8 @@ stackByTable(dpID = 'DP1.10098.001',
 woody_mapping_and_tagging = read.csv('./data/NEON_struct-woody-plant/stackedFiles/vst_mappingandtagging.csv')
 
 # check how many trees there are in the input mapping_and_tagging file 
-print(paste0('There are ', as.character(nrow(woody_mapping_and_tagging)), 
-             ' rows in the mapping_and_tagging file'))
-# sanity check - there should be one unique ID per row
 print(paste0('There are ', as.character(length(unique(woody_mapping_and_tagging$uid))), 
-             ' unique IDs in the mapping_and_tagging file'))
+             ' trees in the mapping_and_tagging file'))
 
 
 # keep only the entries with stemDistance and stemAzimuth information
@@ -59,15 +57,11 @@ woody_mapping_and_tagging <- woody_mapping_and_tagging[complete.cases(woody_mapp
                                                        complete.cases(woody_mapping_and_tagging$stemDistance),]
 
 # check how many trees there are with location information (stem distance and azimuth)
-print(paste0('There are ', as.character(nrow(woody_mapping_and_tagging)), 
-             ' rows with location information'))
-# sanity check - there should be one unique ID per row
 print(paste0('There are ', as.character(length(unique(woody_mapping_and_tagging$uid))), 
-             ' unique IDs with location information'))
+             ' trees with location information'))
 
 
-# use the geoNEON R package to pull geolocation data from the NEON API.
-# get location information for each woody_utm veg entry. 
+# use the geoNEON R package to pull geolocation data from the NEON API for each reference point. 
 # concatenate fields for namedLocation and pointID into new column called "namedLocationPointID"
 woody_mapping_and_tagging$namedLocationPointID <- paste(woody_mapping_and_tagging$namedLocation, 
                                                         woody_mapping_and_tagging$pointID, sep=".")
@@ -118,4 +112,4 @@ suppressWarnings(
            driver="ESRI Shapefile", 
            overwrite_layer = TRUE))
 
-
+# filter the trees to keep only the ones in the current CHM tile 
