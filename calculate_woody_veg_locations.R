@@ -131,5 +131,16 @@ plot(chm_cropped, legend=TRUE,
      legend.args=list(text='Height (m)', cex=0.75))
 points(stem_locations_in, pch = 20, cex = 0.25)
 
-# Extract height values from the CHM 
+# extract height values from the CHM 
+heights <- raster::extract(chm_raster,
+                           stem_locations_in,
+                           method='simple')
+
+# convert the spatialpointsdataframe of tree locations back into a 
+# regular data frame and add the height data to it 
+stem_locations_df <- as.data.frame(stem_locations_in)
+stem_locations_df$height <- heights 
+
+# take a look at the data frame with extracted heights 
+head(stem_locations_df)
 
