@@ -85,20 +85,24 @@ woody_utm$northing <- ref_north +
 woody_utm_complete <- woody_utm[complete.cases(woody_utm$easting) & 
                                 complete.cases(woody_utm$stemDistance),]
 
-# write the woody veg data with UTM (easting, northing) coordinates eo .csv 
-write.csv(woody_utm_complete,
-          './output/woody_veg_locations.csv')
+# keep only the columns of interest
+woody_utm_cols_of_interest <- woody_utm_complete %>% 
+  dplyr::select(individualID, scientificName, taxonID, easting, northing)
 
+# write the woody veg data with UTM (easting, northing) coordinates eo .csv 
+write.csv(woody_utm_cols_of_interest,
+          paste0('./output/',chm_info_out,'_woody-veg-locations.csv'))
 
 
 # get the geographic extent of the tile we will use 
 chm_raster <- raster::raster(chm_filename)
 chm_extent <- chm_raster@extent
 chm_crs <- chm_raster@crs
+# get the tile info for writing out descriptive filenames
+chm_info_out <- paste((strsplit(chm_raster@data@names,"_")[[1]][1:6]),collapse='_')
 
 # write a shapefile with the woody veg locations and other columns of interest 
-stem_locations <- woody_utm_complete %>%
-  dplyr::select(individualID, scientificName, taxonID, easting, northing)
+stem_locations <- woody_utm_cols_of_interest
 
 # assign spatial coordinates to each entry, and coordinate reference system
 sp::coordinates(stem_locations) <- ~easting+northing
@@ -108,7 +112,7 @@ sp::proj4string(stem_locations) <- chm_crs
 suppressWarnings(
   rgdal::writeOGR(stem_locations, 
            './output/',
-           'woody_veg_location_species', 
+           paste0(chm_info_out,'_woody-veg-locations'), 
            driver="ESRI Shapefile", 
            overwrite_layer = TRUE))
 
