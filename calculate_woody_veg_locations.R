@@ -94,7 +94,8 @@ chm_raster <- raster::raster(chm_filename)
 chm_extent <- chm_raster@extent
 chm_crs <- chm_raster@crs
 # get the tile info for writing out descriptive filenames
-chm_info_out <- paste((strsplit(chm_raster@data@names,"_")[[1]][1:6]),collapse='_')
+chm_info_out <- paste((strsplit(chm_raster@data@names,"_")[[1]][1:4]),collapse='_') # whole site
+chm_tile_info_out <- paste((strsplit(chm_raster@data@names,"_")[[1]][1:6]),collapse='_') # current tile
 
 # write the woody veg data with UTM (easting, northing) coordinates eo .csv 
 write.csv(woody_utm_cols_of_interest,
