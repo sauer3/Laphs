@@ -14,7 +14,7 @@ July 13, 2018 NEON Data Institute
 Our group wrote a collection of code to derive features from NEON Airborne Observation Platform (AOP) data and combine 
 them with species labels from the NEON Woody Vegetation Structure in-situ product. 
 
-The final python notebook does the following: 
+The final python jupyter notebook *(Code/LaPHS_workflow.ipynb)* does the following: 
 
 1. Read and clean NEON hyperspectral data
 2. Calculate various spectral indices
