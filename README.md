@@ -9,7 +9,7 @@ LaPHS = Lidar and PhenoCam Hyperspectral Synthesis
 * Stephanie Auer          stephanie.auer@gmail.com
 * Bijan Seyednasollah     bijan.s.nasr@gmail.com
 
-July 13, 2018 NEON Data Institute
+July 14, 2018 NEON Data Institute
 
 Our group wrote a collection of code to derive features from NEON Airborne Observation Platform (AOP) data and combine 
 them with species labels from the NEON Woody Vegetation Structure in-situ product. 
