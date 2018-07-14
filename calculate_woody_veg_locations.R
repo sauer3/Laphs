@@ -89,17 +89,16 @@ woody_utm_complete <- woody_utm[complete.cases(woody_utm$easting) &
 woody_utm_cols_of_interest <- woody_utm_complete %>% 
   dplyr::select(individualID, scientificName, taxonID, easting, northing)
 
-# write the woody veg data with UTM (easting, northing) coordinates eo .csv 
-write.csv(woody_utm_cols_of_interest,
-          paste0('./output/',chm_info_out,'_woody-veg-locations.csv'))
-
-
 # get the geographic extent of the tile we will use 
 chm_raster <- raster::raster(chm_filename)
 chm_extent <- chm_raster@extent
 chm_crs <- chm_raster@crs
 # get the tile info for writing out descriptive filenames
 chm_info_out <- paste((strsplit(chm_raster@data@names,"_")[[1]][1:6]),collapse='_')
+
+# write the woody veg data with UTM (easting, northing) coordinates eo .csv 
+write.csv(woody_utm_cols_of_interest,
+          paste0('./output/',chm_info_out,'_woody-veg-locations.csv'))
 
 # write a shapefile with the woody veg locations and other columns of interest 
 stem_locations <- woody_utm_cols_of_interest
