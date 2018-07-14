@@ -23,5 +23,5 @@ The final python jupyter notebook *(Code/LaPHS_workflow.ipynb)* does the followi
 5. Combine spectral and strucural features 
 6. (in progress) Train a supervised classifier to predict species 
 
-The Woody Vegetation Structure processing is done in a separate R code file, *calculate_woody_veg_locations.R*, since it 
+The Woody Vegetation Structure processing is done in a separate R code file (*Code/calculate_woody_veg_locations.R*) since it 
 utilizes NEON code packages written in R. 
