@@ -32,7 +32,7 @@ library(rgdal)
 setwd("~/github/Laphs/")
 
 # define the path to the CHM to get the geographic extent and CRS 
-chm_filename = './data/NEON_D01_HARV_DP3_732000_4713000_CHM.tif'
+chm_filename = './data/NEON_D01_HARV_DP3_731000_4713000_CHM.tif'
 
 # define the path to the zipped woody veg data
 woody_veg_filename = './data/NEON_struct-woody-plant.zip'
@@ -85,20 +85,23 @@ woody_utm$northing <- ref_north +
 woody_utm_complete <- woody_utm[complete.cases(woody_utm$easting) & 
                                 complete.cases(woody_utm$stemDistance),]
 
-# write the woody veg data with UTM (easting, northing) coordinates eo .csv 
-write.csv(woody_utm_complete,
-          './output/woody_veg_locations.csv')
-
-
+# keep only the columns of interest
+woody_utm_cols_of_interest <- woody_utm_complete %>% 
+  dplyr::select(individualID, scientificName, taxonID, easting, northing)
 
 # get the geographic extent of the tile we will use 
 chm_raster <- raster::raster(chm_filename)
 chm_extent <- chm_raster@extent
 chm_crs <- chm_raster@crs
+# get the tile info for writing out descriptive filenames
+chm_info_out <- paste((strsplit(chm_raster@data@names,"_")[[1]][1:6]),collapse='_')
+
+# write the woody veg data with UTM (easting, northing) coordinates eo .csv 
+write.csv(woody_utm_cols_of_interest,
+          paste0('./output/',chm_info_out,'_woody-veg-locations.csv'))
 
 # write a shapefile with the woody veg locations and other columns of interest 
-stem_locations <- woody_utm_complete %>%
-  dplyr::select(individualID, scientificName, taxonID, easting, northing)
+stem_locations <- woody_utm_cols_of_interest
 
 # assign spatial coordinates to each entry, and coordinate reference system
 sp::coordinates(stem_locations) <- ~easting+northing
@@ -108,7 +111,7 @@ sp::proj4string(stem_locations) <- chm_crs
 suppressWarnings(
   rgdal::writeOGR(stem_locations, 
            './output/',
-           'woody_veg_location_species', 
+           paste0(chm_info_out,'_woody-veg-locations'), 
            driver="ESRI Shapefile", 
            overwrite_layer = TRUE))
 
@@ -131,5 +134,16 @@ plot(chm_cropped, legend=TRUE,
      legend.args=list(text='Height (m)', cex=0.75))
 points(stem_locations_in, pch = 20, cex = 0.25)
 
-# Extract height values from the CHM 
+# extract height values from the CHM 
+heights <- raster::extract(chm_raster,
+                           stem_locations_in,
+                           method='simple')
+
+# convert the spatialpointsdataframe of tree locations back into a 
+# regular data frame and add the height data to it 
+stem_locations_df <- as.data.frame(stem_locations_in)
+stem_locations_df$height <- heights 
+
+# take a look at the data frame with extracted heights 
+head(stem_locations_df)
 
