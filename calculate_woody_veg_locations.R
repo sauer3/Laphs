@@ -32,7 +32,7 @@ library(rgdal)
 setwd("~/github/Laphs/")
 
 # define the path to the CHM to get the geographic extent and CRS 
-chm_filename = './data/NEON_D01_HARV_DP3_732000_4713000_CHM.tif'
+chm_filename = './data/NEON_D01_HARV_DP3_731000_4713000_CHM.tif'
 
 # define the path to the zipped woody veg data
 woody_veg_filename = './data/NEON_struct-woody-plant.zip'
